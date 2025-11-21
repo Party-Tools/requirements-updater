@@ -210,7 +210,29 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 
 **Party Tools** - [GitHub Organization](https://github.com/Party-Tools)
 
-Forked originalmente de [azurda/azurda.github.io](https://github.com/azurda/azurda.github.io)
+---
+
+## 🎨 Design Variants
+
+Este proyecto incluye **25 variantes de diseño únicas** en la carpeta `design-variants/`:
+- Desde Glassmorphism hasta Brutalist
+- Desde Cyberpunk hasta Paper Scrapbook
+- Cada una con su propia personalidad y estética
+
+[Ver todas las variantes →](design-variants/)
+
+---
+
+## 🙏 Créditos y Agradecimientos
+
+Este proyecto es un fork del excelente trabajo original de **[@azurda](https://github.com/azurda)**:
+
+**Repositorio Original:** [azurda/azurda.github.io](https://github.com/azurda/azurda.github.io)
+
+### Gracias especiales a:
+- 🌟 **azurda** por crear la herramienta original y la idea innovadora
+- 💡 La implementación inicial y el concepto base son obra de azurda
+- 🎨 Este fork añade variantes de diseño y mejoras adicionales sobre su trabajo
 
 ---
 
@@ -240,11 +262,13 @@ Si encuentras útil esta herramienta, considera apoyar al autor original:
 
 ---
 
-## 🙏 Agradecimientos
+## 🙏 Agradecimientos Adicionales
 
+- **[@azurda](https://github.com/azurda)** - Creador original del proyecto base
 - PyPI por su API pública
 - La comunidad de Python
 - Contribuidores y usuarios del proyecto
+- Todos los que apoyan el desarrollo de herramientas open source
 
 ---
 
