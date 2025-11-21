@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Requirements.txt Updater - Split Screen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; height: 100vh; display: flex; overflow: hidden; }
+        .split-pane { flex: 1; display: flex; flex-direction: column; padding: 40px; position: relative; }
+        .left-pane { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .right-pane { background: #f8f9fa; color: #333; }
+        #dark-mode-toggle { position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: white; border: none; border-radius: 20px; cursor: pointer; z-index: 1000; font-weight: 600; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        h2 { font-size: 1.5em; margin: 20px 0; }
+        textarea, #output-requirements { width: 100%; flex: 1; resize: none; border: 2px solid rgba(0,0,0,0.1); border-radius: 10px; padding: 20px; font-family: monospace; font-size: 14px; }
+        .left-pane textarea { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.3); }
+        .left-pane textarea::placeholder { color: rgba(255,255,255,0.6); }
+        #output-requirements { white-space: pre-wrap; word-wrap: break-word; overflow-y: auto; background: white; }
+        #status { margin-top: 15px; padding: 10px; text-align: center; border-radius: 5px; font-weight: 600; }
+        .left-pane #status { background: rgba(255,255,255,0.2); }
+        .updated { background: #48bb78; color: white; padding: 2px 6px; border-radius: 3px; }
+        .ko-fi { position: absolute; bottom: 20px; right: 20px; padding: 12px 30px; background: white; color: #667eea; border-radius: 20px; text-decoration: none; font-weight: 600; }
+        @media (max-width: 768px) { body { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <button id="dark-mode-toggle">Toggle</button>
+    <div class="split-pane left-pane">
+        <h1>Python Requirements</h1>
+        <p>Updater Tool</p>
+        <h2>📥 Input</h2>
+        <textarea id="input-requirements" placeholder="Paste requirements.txt..."></textarea>
+        <div id="status"></div>
+    </div>
+    <div class="split-pane right-pane">
+        <h1 style="color: #667eea;">Updated Version</h1>
+        <p>Latest Packages</p>
+        <h2>📤 Output</h2>
+        <div id="output-requirements" contenteditable="true"></div>
+        <a href="https://ko-fi.com/entangle" target="_blank" class="ko-fi">☕ Support</a>
+    </div>
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        document.getElementById('dark-mode-toggle').onclick = () => document.body.style.filter = document.body.style.filter ? '' : 'invert(0.9)';
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+        async function updateRequirements() {
+            const lines = inputElement.value.split('\n');
+            statusElement.textContent = 'Finding...';
+            const updatedLines = [];
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine && !trimmedLine.startsWith('#')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    try {
+                        const latestVersion = await getLatestVersion(packageName);
+                        const updatedLine = \`\${packageName}==\${latestVersion}\`;
+                        if (currentVersion && latestVersion !== currentVersion) {
+                            updatedLines.push(\`<span class="updated">\${updatedLine}</span>\`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } catch (error) {
+                        updatedLines.push(trimmedLine + ' # Error');
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = 'Done!';
+        }
+        async function getLatestVersion(packageName) {
+            const response = await fetch(\`https://pypi.org/pypi/\${packageName}/json\`);
+            if (!response.ok) throw new Error('HTTP error');
+            const data = await response.json();
+            return data.info.version;
+        }
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+    </script>
+</body>
+</html>

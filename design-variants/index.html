@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Variants Gallery - Requirements Updater</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .card-number {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-style {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .card-link {
+            display: block;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .card-link:hover {
+            opacity: 0.9;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin: 30px 0;
+            padding: 15px 30px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Design Variants Gallery</h1>
+            <p class="subtitle">Explore 15 unique designs for the Python Requirements Updater</p>
+        </header>
+
+        <div class="gallery">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-number">01</div>
+                    <div class="card-title">Glassmorphism Modern</div>
+                    <div class="card-style">Frosted Glass Effect</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Elegant translucent frosted glass panels with blur effects and gradient backgrounds.</p>
+                    <div class="card-features">
+                        <span class="tag">Modern</span>
+                        <span class="tag">Blur</span>
+                        <span class="tag">Gradient</span>
+                    </div>
+                    <a href="variant-01-glassmorphism.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #ff006e 0%, #8b00ff 100%);">
+                    <div class="card-number">02</div>
+                    <div class="card-title">Cyberpunk Neon</div>
+                    <div class="card-style">High-Tech Dystopian</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Futuristic neon colors with glitch effects, grid patterns, and scanline animations.</p>
+                    <div class="card-features">
+                        <span class="tag">Dark</span>
+                        <span class="tag">Neon</span>
+                        <span class="tag">Animated</span>
+                    </div>
+                    <a href="variant-02-cyberpunk-neon.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #5e81ac 0%, #88c0d0 100%);">
+                    <div class="card-number">03</div>
+                    <div class="card-title">Minimalist Nordic</div>
+                    <div class="card-style">Scandinavian Clean</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Peaceful Nordic color palette with maximum simplicity and clean typography.</p>
+                    <div class="card-features">
+                        <span class="tag">Minimal</span>
+                        <span class="tag">Clean</span>
+                        <span class="tag">Professional</span>
+                    </div>
+                    <a href="variant-03-minimalist-nordic.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #f093fb 100%);">
+                    <div class="card-number">04</div>
+                    <div class="card-title">Gradient Wave</div>
+                    <div class="card-style">Flowing Colors</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Animated gradients with SVG wave patterns and smooth color transitions.</p>
+                    <div class="card-features">
+                        <span class="tag">Animated</span>
+                        <span class="tag">Colorful</span>
+                        <span class="tag">Dynamic</span>
+                    </div>
+                    <a href="variant-04-gradient-wave.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #e0e5ec 0%, #a3b1c6 100%);">
+                    <div class="card-number">05</div>
+                    <div class="card-title">Neumorphism Soft</div>
+                    <div class="card-style">Soft UI Design</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Tactile soft shadows with embossed and debossed effects for a gentle interface.</p>
+                    <div class="card-features">
+                        <span class="tag">Soft</span>
+                        <span class="tag">Tactile</span>
+                        <span class="tag">Modern</span>
+                    </div>
+                    <a href="variant-05-neumorphism.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #6750A4 0%, #7D5260 100%);">
+                    <div class="card-number">06</div>
+                    <div class="card-title">Material Design 3</div>
+                    <div class="card-style">Google's Latest</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Material You design with dynamic colors, elevation shadows, and rounded corners.</p>
+                    <div class="card-features">
+                        <span class="tag">Material</span>
+                        <span class="tag">Google</span>
+                        <span class="tag">Adaptive</span>
+                    </div>
+                    <a href="variant-06-material-design.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #0c0c0c 0%, #33ff33 100%);">
+                    <div class="card-number">07</div>
+                    <div class="card-title">Retro Terminal</div>
+                    <div class="card-style">CRT Monitor</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Old-school terminal aesthetics with CRT scanlines, flicker, and green text.</p>
+                    <div class="card-features">
+                        <span class="tag">Retro</span>
+                        <span class="tag">Terminal</span>
+                        <span class="tag">Nostalgic</span>
+                    </div>
+                    <a href="variant-07-retro-terminal.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #0f0f0f 0%, #d4af37 100%);">
+                    <div class="card-number">08</div>
+                    <div class="card-title">Elegant Dark Premium</div>
+                    <div class="card-style">Luxury Gold Accents</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Sophisticated dark theme with gold accents and elegant serif typography.</p>
+                    <div class="card-features">
+                        <span class="tag">Premium</span>
+                        <span class="tag">Luxury</span>
+                        <span class="tag">Dark</span>
+                    </div>
+                    <a href="variant-08-elegant-dark-premium.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
+                    <div class="card-number">09</div>
+                    <div class="card-title">Colorful Playful</div>
+                    <div class="card-style">Fun & Vibrant</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Energetic rainbow colors with bounce animations and playful emoji decorations.</p>
+                    <div class="card-features">
+                        <span class="tag">Colorful</span>
+                        <span class="tag">Fun</span>
+                        <span class="tag">Animated</span>
+                    </div>
+                    <a href="variant-09-colorful-playful.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #003d82 0%, #0066cc 100%);">
+                    <div class="card-number">10</div>
+                    <div class="card-title">Professional Corporate</div>
+                    <div class="card-style">Business Enterprise</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Clean corporate design with blue accents and professional grid layout.</p>
+                    <div class="card-features">
+                        <span class="tag">Corporate</span>
+                        <span class="tag">Professional</span>
+                        <span class="tag">Clean</span>
+                    </div>
+                    <a href="variant-10-professional-corporate.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #1a1a2e 0%, #764ba2 100%);">
+                    <div class="card-number">11</div>
+                    <div class="card-title">Animated Particles</div>
+                    <div class="card-style">Canvas Animation</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Interactive canvas with floating particles and glassmorphic panels.</p>
+                    <div class="card-features">
+                        <span class="tag">Interactive</span>
+                        <span class="tag">Canvas</span>
+                        <span class="tag">Animated</span>
+                    </div>
+                    <a href="variant-11-animated-particles.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #f8f9fa 100%);">
+                    <div class="card-number">12</div>
+                    <div class="card-title">Split Screen Modern</div>
+                    <div class="card-style">50/50 Layout</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Full-height split design with contrasting left/right panels for comparison.</p>
+                    <div class="card-features">
+                        <span class="tag">Split</span>
+                        <span class="tag">Modern</span>
+                        <span class="tag">Contrast</span>
+                    </div>
+                    <a href="variant-12-split-screen-modern.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);">
+                    <div class="card-number">13</div>
+                    <div class="card-title">Card-Based Layout</div>
+                    <div class="card-style">Material Cards</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Grid of elevated cards with hover effects and organized content sections.</p>
+                    <div class="card-features">
+                        <span class="tag">Cards</span>
+                        <span class="tag">Grid</span>
+                        <span class="tag">Organized</span>
+                    </div>
+                    <a href="variant-13-card-based-layout.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #000 0%, #0ff 100%);">
+                    <div class="card-number">14</div>
+                    <div class="card-title">Futuristic Holographic</div>
+                    <div class="card-style">Sci-Fi Interface</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Hologram-inspired design with cyan/magenta colors and glowing effects.</p>
+                    <div class="card-features">
+                        <span class="tag">Sci-Fi</span>
+                        <span class="tag">Holographic</span>
+                        <span class="tag">Futuristic</span>
+                    </div>
+                    <a href="variant-14-futuristic-holographic.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);">
+                    <div class="card-number">15</div>
+                    <div class="card-title">Nature-Inspired Organic</div>
+                    <div class="card-style">Earthy & Natural</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-description">Organic shapes with green tones, plant emojis, and swaying animations.</p>
+                    <div class="card-features">
+                        <span class="tag">Nature</span>
+                        <span class="tag">Organic</span>
+                        <span class="tag">Eco</span>
+                    </div>
+                    <a href="variant-15-nature-inspired-organic.html" class="card-link">View Design →</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="../index.html" class="back-link">← Back to Main App</a>
+        </div>
+    </div>
+</body>
+</html>
