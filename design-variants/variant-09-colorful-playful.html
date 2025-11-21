@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Colorful Playful</title>
+    <style>
+        :root {
+            --color-1: #FF6B6B;
+            --color-2: #4ECDC4;
+            --color-3: #45B7D1;
+            --color-4: #FFA07A;
+            --color-5: #98D8C8;
+            --color-6: #F7DC6F;
+            --bg-light: #FFF5E4;
+            --text-dark: #2C3E50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FFE4E1 0%, #E0F7FA 50%, #FFF9C4 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '🐍🎨📦✨🚀💻🎉🌈';
+            position: fixed;
+            font-size: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.05;
+            letter-spacing: 40px;
+            animation: rainbow 10s infinite;
+            pointer-events: none;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--color-1), var(--color-2));
+            border: 3px solid white;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            animation: bounce 2s infinite;
+        }
+
+        #dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--color-1), var(--color-2), var(--color-3), var(--color-4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: rainbow 5s infinite;
+        }
+
+        .emoji-row {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            z-index: 1;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            flex: 1;
+            background: white;
+            border: 5px solid;
+            border-image: linear-gradient(135deg, var(--color-1), var(--color-2), var(--color-3)) 1;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .panel:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: var(--color-1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon {
+            font-size: 1.5em;
+            animation: rotate 5s infinite linear;
+        }
+
+        textarea, #output-requirements {
+            width: 100%;
+            height: 400px;
+            resize: none;
+            border: 3px dashed var(--color-3);
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            background: linear-gradient(135deg, #FFF 0%, #FFFACD 100%);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            border-color: var(--color-1);
+            border-style: solid;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+            transform: scale(1.02);
+        }
+
+        #output-requirements {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 12px;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--color-5), var(--color-6));
+            color: var(--text-dark);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .updated {
+            background: linear-gradient(135deg, #FF6B6B, #FFA07A);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 900;
+            box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+            animation: bounce 1s;
+        }
+
+        .ko-fi-banner {
+            margin-top: 30px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .ko-fi-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: 4px solid white;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 900;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: bounce 2s infinite;
+        }
+
+        .ko-fi-button:hover {
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 15px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, var(--color-2), var(--color-5));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--color-1), var(--color-4));
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <button id="dark-mode-toggle">🌈 Toggle Fun!</button>
+    
+    <header>
+        <div class="emoji-row">🎨 🐍 📦 ✨</div>
+        <h1>Requirements Updater</h1>
+        <p class="subtitle">Super Colorful & Playful Edition!</p>
+    </header>
+
+    <div class="container">
+        <div class="panel input">
+            <h2><span class="icon">📝</span> Your Old File</h2>
+            <textarea id="input-requirements" placeholder="Paste your requirements.txt here! 🎉"></textarea>
+            <div id="status"></div>
+        </div>
+        <div class="panel output">
+            <h2><span class="icon">✨</span> Your New File</h2>
+            <div id="output-requirements" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <div class="ko-fi-banner">
+        <a href="https://ko-fi.com/entangle" target="_blank" class="ko-fi-button">
+            ☕ Support Us! 💖
+        </a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        function toggleDarkMode() {
+            document.body.style.filter = document.body.style.filter ? '' : 'invert(0.9) hue-rotate(180deg)';
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            const lines = input.split('\n');
+            
+            statusElement.textContent = '🔍 Finding packages...';
+            outputElement.innerHTML = '';
+
+            const updatedLines = [];
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine && !trimmedLine.startsWith('#')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    try {
+                        const latestVersion = await getLatestVersion(packageName);
+                        const updatedLine = `${packageName}==${latestVersion}`;
+                        if (currentVersion && latestVersion !== currentVersion) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching version for ${packageName}:`, error);
+                        updatedLines.push(trimmedLine + ' # Error fetching latest version');
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = '✅ All done! Yay! 🎉';
+        }
+
+        async function getLatestVersion(packageName) {
+            const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.info.version;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

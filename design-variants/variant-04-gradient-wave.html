@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Gradient Wave</title>
+    <style>
+        :root {
+            --wave-1: #667eea;
+            --wave-2: #764ba2;
+            --wave-3: #f093fb;
+            --wave-4: #4facfe;
+            --text-light: #ffffff;
+            --text-dark: #2d3748;
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --updated-bg: #48bb78;
+        }
+
+        .dark-mode {
+            --panel-bg: rgba(45, 55, 72, 0.95);
+            --text-dark: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-25%) translateY(-10px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background: linear-gradient(-45deg, var(--wave-1), var(--wave-2), var(--wave-3), var(--wave-4));
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .wave-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background-repeat: repeat-x;
+            opacity: 0.3;
+        }
+
+        .wave1 {
+            animation: wave 20s linear infinite;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(255,255,255,0.3)"/></svg>');
+            background-size: 50% 100%;
+        }
+
+        .wave2 {
+            animation: wave 15s linear infinite reverse;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="rgba(255,255,255,0.2)"/></svg>');
+            background-size: 50% 100%;
+            animation-delay: -5s;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 15px 30px;
+            background: var(--panel-bg);
+            border: none;
+            border-radius: 50px;
+            color: var(--text-dark);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        #dark-mode-toggle:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin: 80px 0 50px;
+            z-index: 1;
+            color: var(--text-light);
+        }
+
+        h1 {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            font-weight: 400;
+            opacity: 0.95;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            z-index: 1;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            flex: 1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel h2 {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: linear-gradient(135deg, var(--wave-1), var(--wave-3));
+            color: white;
+        }
+
+        textarea, #output-requirements {
+            width: 100%;
+            height: 400px;
+            resize: none;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 20px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            background: rgba(0, 0, 0, 0.03);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            border-color: var(--wave-1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        #output-requirements {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+        }
+
+        .updated {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .ko-fi-banner {
+            margin-top: 40px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .ko-fi-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .ko-fi-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(255, 107, 107, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .panel {
+                padding: 25px;
+            }
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--wave-1), var(--wave-3));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--wave-3), var(--wave-4));
+        }
+    </style>
+</head>
+<body>
+    <div class="wave-container">
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
+    </div>
+
+    <button id="dark-mode-toggle">🌓 Toggle Theme</button>
+    
+    <header>
+        <h1>Requirements Updater</h1>
+        <p class="subtitle">Beautiful gradients, smooth updates</p>
+    </header>
+
+    <div class="container">
+        <div class="panel input">
+            <h2><span class="icon">📥</span> Current File</h2>
+            <textarea id="input-requirements" placeholder="Paste your requirements.txt here..."></textarea>
+            <div id="status"></div>
+        </div>
+        <div class="panel output">
+            <h2><span class="icon">📤</span> Updated File</h2>
+            <div id="output-requirements" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <div class="ko-fi-banner">
+        <a href="https://ko-fi.com/entangle" target="_blank" class="ko-fi-button">☕ Support on Ko-fi</a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            const lines = input.split('\n');
+            
+            statusElement.textContent = '🔍 Finding packages...';
+            outputElement.innerHTML = '';
+
+            const updatedLines = [];
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine && !trimmedLine.startsWith('#')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    try {
+                        const latestVersion = await getLatestVersion(packageName);
+                        const updatedLine = `${packageName}==${latestVersion}`;
+                        if (currentVersion && latestVersion !== currentVersion) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching version for ${packageName}:`, error);
+                        updatedLines.push(trimmedLine + ' # Error fetching latest version');
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = '✅ Packages synced!';
+        }
+
+        async function getLatestVersion(packageName) {
+            const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.info.version;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
