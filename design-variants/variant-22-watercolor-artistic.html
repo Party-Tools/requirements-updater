@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Watercolor Artistic</title>
+    <style>
+
+        :root {
+            --water-pink: #FFB6C1;
+            --water-blue: #ADD8E6;
+            --water-purple: #DDA0DD;
+            --water-yellow: #FFFACD;
+            --text-color: #2C3E50;
+            --updated-bg: #90EE90;
+        }
+        
+        .dark-mode {
+            --text-color: #ECF0F1;
+            --updated-bg: #52BE80;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--water-pink) 0%, var(--water-blue) 50%, var(--water-purple) 100%);
+            font-family: 'Brush Script MT', cursive;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, transparent 20%, white 20%, white 80%, transparent 80%),
+                        radial-gradient(circle, transparent 20%, white 20%, white 80%, transparent 80%);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            color: var(--text-color);
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            font-family: 'Brush Script MT', cursive;
+        }
+        
+        textarea, #output-requirements {
+            background: rgba(255, 255, 255, 0.7);
+            border: 3px solid rgba(44, 62, 80, 0.3);
+            border-radius: 15px;
+            color: var(--text-color);
+        }
+        
+        .updated {
+            background: var(--updated-bg);
+            border-radius: 10px;
+            padding: 3px 8px;
+        }
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+            z-index: 1;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            z-index: 1;
+        }
+
+        .input, .output {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+
+        textarea, #output-requirements {
+            flex: 1;
+            min-height: 400px;
+            padding: 20px;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+        }
+
+        #output-requirements {
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #kofi-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            padding: 15px;
+            z-index: 999;
+        }
+
+        #kofi-banner a {
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="dark-mode-toggle">🌓 Toggle Mode</button>
+    
+    <header>
+        <h1>🔄 Requirements Updater</h1>
+        <p class="subtitle">Hand-Painted Aesthetic</p>
+    </header>
+
+    <div class="container">
+        <div class="input">
+            <h2>📝 Current requirements.txt</h2>
+            <textarea id="input-requirements" placeholder="Paste your requirements.txt here...
+
+Example:
+flask==2.0.1
+requests==2.26.0
+pandas==1.3.0"></textarea>
+            <div class="status" id="status">Waiting for input...</div>
+        </div>
+
+        <div class="output">
+            <h2>✨ Updated requirements.txt</h2>
+            <div id="output-requirements" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <div id="kofi-banner">
+        ☕ Support this tool: <a href="https://ko-fi.com/entangle" target="_blank">Buy me a coffee</a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function getLatestVersion(packageName) {
+            try {
+                const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+                const data = await response.json();
+                return data.info.version;
+            } catch (error) {
+                console.error(`Error fetching ${packageName}:`, error);
+                return null;
+            }
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            if (!input.trim()) {
+                outputElement.innerHTML = '';
+                statusElement.textContent = 'Waiting for input...';
+                return;
+            }
+
+            statusElement.textContent = '🔍 Finding latest versions...';
+            
+            const lines = input.split('\n');
+            const updatedLines = [];
+            let packagesFound = 0;
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    updatedLines.push(trimmedLine);
+                    continue;
+                }
+
+                if (trimmedLine.includes('==')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    const latestVersion = await getLatestVersion(packageName.trim());
+
+                    if (latestVersion) {
+                        packagesFound++;
+                        const updatedLine = `${packageName.trim()}==${latestVersion}`;
+                        
+                        if (latestVersion !== currentVersion.trim()) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } else {
+                        updatedLines.push(`${trimmedLine} # Error: Package not found`);
+                    }
+                } else {
+                    updatedLines.push(trimmedLine);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = `✅ ${packagesFound} packages synced!!`;
+        }
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # 🎨 Requirements Updater - Design Variants Collection
 
-This folder contains **15 unique design prototypes** for the Python Requirements.txt Updater. Each variant maintains the core functionality while showcasing different modern design approaches and aesthetic styles.
+This folder contains **25 unique design prototypes** for the Python Requirements.txt Updater. Each variant maintains the core functionality while showcasing different modern design approaches and aesthetic styles.
 
 ## 📋 Overview
 
@@ -14,11 +14,11 @@ All variants maintain the original functionality:
 
 ## 📸 Screenshots
 
-Full-page screenshots of all 15 variants are available in the [`screenshots/`](screenshots/) folder. You can view them in the [Screenshots Gallery](screenshots/README.md) or browse interactively via [`index.html`](index.html).
+Full-page screenshots of all 25 variants are available in the [`screenshots/`](screenshots/) folder. You can view them in the [Screenshots Gallery](screenshots/README.md) or browse interactively via [`index.html`](index.html).
 
 ---
 
-## 🎭 The 15 Design Variants
+## 🎭 The 25 Design Variants
 
 ### 1️⃣ Glassmorphism Modern (`variant-01-glassmorphism.html`)
 **Style:** Translucent frosted glass effects with blur
@@ -232,6 +232,146 @@ Full-page screenshots of all 15 variants are available in the [`screenshots/`](s
 
 ---
 
+### 16. Geometric Patterns (`variant-16-geometric-patterns.html`)
+**Style:** Angular geometric shapes with pattern overlay
+**Colors:** Red, teal, yellow on dark gray
+**Features:**
+- Diagonal striped pattern background
+- Conic gradient animation
+- Clipped polygon borders
+- Diamond bullet points
+- Geometric heading shapes
+
+**Best for:** Modern, structured, mathematical applications
+
+---
+
+### 17. Paper Scrapbook (`variant-17-paper-scrapbook.html`)
+**Style:** Hand-crafted paper and tape aesthetic
+**Colors:** Warm browns, cream paper, ink black
+**Features:**
+- Paper texture backgrounds
+- Tape decorations on headers
+- Rotated elements for natural feel
+- Dashed borders
+- Serif typography
+
+**Best for:** Personal projects, creative portfolios, vintage themes
+
+---
+
+### 18. Liquid Fluid Morphing (`variant-18-liquid-fluid.html`)
+**Style:** Organic fluid shapes with morphing animations
+**Colors:** Purple, blue, pink gradient blobs
+**Features:**
+- Animated blob shapes
+- Morphing border-radius
+- Floating animations
+- Heavy backdrop blur
+- Smooth color transitions
+
+**Best for:** Creative agencies, art portfolios, innovative brands
+
+---
+
+### 19. 3D Depth Perspective (`variant-19-3d-depth.html`)
+**Style:** Layered 3D perspective with depth
+**Colors:** Deep blue tones with cyan/red accents
+**Features:**
+- CSS 3D transforms (translateZ)
+- Perspective depth
+- Layered shadows
+- Rotated panels
+- Elevation effects
+
+**Best for:** Tech demos, immersive experiences, gaming
+
+---
+
+### 20. Vintage Poster (`variant-20-vintage-poster.html`)
+**Style:** Retro advertisement design
+**Colors:** Vintage yellow, red, cream
+**Features:**
+- Double border frames
+- Bold uppercase typography
+- Text shadows for depth
+- Serif fonts
+- Classic color palette
+
+**Best for:** Retro projects, nostalgic branding, vintage aesthetics
+
+---
+
+### 21. Tech Blueprint (`variant-21-tech-blueprint.html`)
+**Style:** Engineering schematic design
+**Colors:** Blueprint blue with cyan grid lines
+**Features:**
+- Grid background pattern
+- Glowing cyan accents
+- Monospace fonts
+- Technical aesthetic
+- Schematic styling
+
+**Best for:** Engineering tools, technical documentation, dev tools
+
+---
+
+### 22. Watercolor Artistic (`variant-22-watercolor-artistic.html`)
+**Style:** Hand-painted watercolor effect
+**Colors:** Soft pastels - pink, blue, purple
+**Features:**
+- Gradient color washes
+- Dotted texture overlay
+- Brush script fonts
+- Rounded organic shapes
+- Artistic feel
+
+**Best for:** Art portfolios, creative projects, design studios
+
+---
+
+### 23. High Contrast Accessibility (`variant-23-high-contrast-accessibility.html`)
+**Style:** Maximum accessibility and readability
+**Colors:** Pure black and white (yellow in dark mode)
+**Features:**
+- High contrast ratios
+- Large fonts (16px minimum)
+- Thick borders
+- Clear focus indicators
+- WCAG AAA compliant
+
+**Best for:** Accessible applications, government sites, inclusive design
+
+---
+
+### 24. Monochrome Elegant (`variant-24-monochrome-elegant.html`)
+**Style:** Sophisticated black and white
+**Colors:** Pure monochrome palette
+**Features:**
+- Minimal color usage
+- Thin elegant typography
+- Letter spacing
+- Subtle gradients
+- Clean sophistication
+
+**Best for:** Luxury brands, minimalist portfolios, professional services
+
+---
+
+### 25. Brutalist Raw (`variant-25-brutalist-raw.html`)
+**Style:** Raw, unpolished, functional
+**Colors:** Gray, black, white, stark accents
+**Features:**
+- No border radius
+- Thick black borders
+- Bold heavy fonts
+- Negative letter spacing
+- Unrefined aesthetic
+
+**Best for:** Experimental projects, artistic statements, bold brands
+
+---
+
 ## 🚀 How to Use
 
 1. **Preview Locally:**
@@ -247,7 +387,7 @@ Full-page screenshots of all 15 variants are available in the [`screenshots/`](s
    - Check responsiveness
 
 3. **Choose Your Favorite:**
-   - Compare all 15 designs
+   - Compare all 25 designs
    - Consider your brand/audience
    - Pick the one that fits best
 
@@ -265,23 +405,28 @@ Full-page screenshots of all 15 variants are available in the [`screenshots/`](s
 
 | Use Case | Recommended Variants |
 |----------|---------------------|
-| **Corporate/Business** | #3 Nordic, #6 Material, #10 Corporate |
-| **Creative/Agency** | #1 Glassmorphism, #4 Wave, #9 Playful |
-| **Tech/Developer** | #2 Cyberpunk, #7 Terminal, #14 Holographic |
-| **Modern/Trendy** | #1 Glassmorphism, #5 Neumorphism, #6 Material |
-| **Minimalist** | #3 Nordic, #10 Corporate |
-| **Fun/Casual** | #9 Playful, #15 Nature |
+| **Corporate/Business** | #3 Nordic, #6 Material, #10 Corporate, #24 Monochrome |
+| **Creative/Agency** | #1 Glassmorphism, #4 Wave, #9 Playful, #17 Paper, #18 Liquid, #22 Watercolor |
+| **Tech/Developer** | #2 Cyberpunk, #7 Terminal, #14 Holographic, #16 Geometric, #19 3D, #21 Blueprint |
+| **Modern/Trendy** | #1 Glassmorphism, #5 Neumorphism, #6 Material, #18 Liquid, #19 3D |
+| **Minimalist** | #3 Nordic, #10 Corporate, #24 Monochrome |
+| **Fun/Casual** | #9 Playful, #15 Nature, #17 Paper, #22 Watercolor |
+| **Retro/Vintage** | #7 Terminal, #17 Paper, #20 Vintage Poster |
+| **Accessibility First** | #23 High Contrast |
+| **Experimental/Bold** | #25 Brutalist, #16 Geometric, #21 Blueprint |
 
 ### By Aesthetic
 
 | Aesthetic | Variants |
 |-----------|----------|
-| **Dark Theme** | #2, #7, #8, #11, #14 |
-| **Light Theme** | #3, #4, #10, #13, #15 |
-| **Colorful** | #4, #9, #14 |
-| **Monochromatic** | #3, #5, #7, #8 |
-| **Animated** | #4, #9, #11, #14 |
-| **Static** | #3, #6, #10, #13 |
+| **Dark Theme** | #2, #7, #8, #11, #14, #16, #18, #19, #21, #24 |
+| **Light Theme** | #3, #4, #10, #13, #15, #17, #20, #22, #23, #25 |
+| **Colorful** | #4, #9, #14, #16, #18, #20, #22 |
+| **Monochromatic** | #3, #5, #7, #8, #23, #24, #25 |
+| **Animated** | #4, #9, #11, #14, #16, #18, #19 |
+| **Static** | #3, #6, #10, #13, #17, #20, #23, #24, #25 |
+| **3D/Depth** | #5, #19 |
+| **Artistic/Creative** | #17, #18, #22 |
 
 ---
 
@@ -401,13 +546,13 @@ Screenshots of all variants are available in the project's GitHub Issues or Wiki
 
 ## 🎉 Have Fun!
 
-These 15 variants demonstrate that good functionality can come in many beautiful packages. Choose the one that resonates with your project's personality!
+These 25 variants demonstrate that good functionality can come in many beautiful packages. Choose the one that resonates with your project's personality!
 
 **Remember:** The best design is the one that serves your users best. 🚀
 
 ---
 
 **Created:** 2025-11-21  
-**Variants:** 15  
-**Total Lines of Code:** ~15,000  
-**Coffee Consumed:** ☕☕☕☕☕
+**Variants:** 25  
+**Total Lines of Code:** ~25,000  
+**Coffee Consumed:** ☕☕☕☕☕☕☕☕

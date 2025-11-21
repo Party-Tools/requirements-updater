@@ -1,6 +1,6 @@
 # 📸 Design Variants Screenshots
 
-This folder contains screenshots of all 15 design variants for the Python Requirements Updater.
+This folder contains screenshots of all 25 design variants for the Python Requirements Updater.
 
 ## Screenshots Gallery
 
@@ -63,6 +63,46 @@ This folder contains screenshots of all 15 design variants for the Python Requir
 ### 15. Nature-Inspired Organic
 ![Nature](variant-15-nature-inspired-organic.png)
 *Earth tones with plant themes*
+
+### 16. Geometric Patterns
+![Geometric](variant-16-geometric-patterns.png)
+*Angular shapes with diagonal patterns and rotating conic gradient*
+
+### 17. Paper Scrapbook
+![Paper](variant-17-paper-scrapbook.png)
+*Hand-crafted paper texture with tape decorations*
+
+### 18. Liquid Fluid Morphing
+![Liquid](variant-18-liquid-fluid.png)
+*Organic morphing shapes with fluid animations*
+
+### 19. 3D Depth Perspective
+![3D Depth](variant-19-3d-depth.png)
+*Layered perspective with CSS 3D transforms*
+
+### 20. Vintage Poster
+![Vintage](variant-20-vintage-poster.png)
+*Retro advertisement style with bold colors*
+
+### 21. Tech Blueprint
+![Blueprint](variant-21-tech-blueprint.png)
+*Engineering schematic with grid background*
+
+### 22. Watercolor Artistic
+![Watercolor](variant-22-watercolor-artistic.png)
+*Hand-painted watercolor effect with soft pastels*
+
+### 23. High Contrast Accessibility
+![High Contrast](variant-23-high-contrast-accessibility.png)
+*Maximum accessibility with pure black and white*
+
+### 24. Monochrome Elegant
+![Monochrome](variant-24-monochrome-elegant.png)
+*Sophisticated black and white minimalism*
+
+### 25. Brutalist Raw
+![Brutalist](variant-25-brutalist-raw.png)
+*Raw, unpolished, functional design*
 
 ---
 

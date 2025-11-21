@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Liquid Fluid</title>
+    <style>
+        :root {
+            --liquid-1: #667eea;
+            --liquid-2: #764ba2;
+            --liquid-3: #f093fb;
+            --liquid-4: #4facfe;
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --container-bg: rgba(255, 255, 255, 0.05);
+            --updated-bg: #00f2fe;
+        }
+
+        .dark-mode {
+            --liquid-1: #fa709a;
+            --liquid-2: #fee140;
+            --liquid-3: #30cfd0;
+            --liquid-4: #330867;
+            --updated-bg: #fee140;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes morph {
+            0%, 100% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+            34% {
+                border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+            }
+            67% {
+                border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            left: -100px;
+            background: linear-gradient(45deg, var(--liquid-1), var(--liquid-2));
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morph 8s ease-in-out infinite, float 10s ease-in-out infinite;
+            opacity: 0.4;
+            filter: blur(40px);
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            bottom: -150px;
+            right: -150px;
+            background: linear-gradient(135deg, var(--liquid-3), var(--liquid-4));
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 10s ease-in-out infinite reverse, float 12s ease-in-out infinite reverse;
+            opacity: 0.4;
+            filter: blur(40px);
+            z-index: 0;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 28px;
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        #dark-mode-toggle:hover {
+            transform: translateY(-3px);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+            z-index: 1;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--liquid-1), var(--liquid-3), var(--liquid-4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: morph 6s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .input, .output {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            padding: 15px 25px;
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        h2:hover {
+            border-radius: 30px 10px 30px 10px;
+            transform: translateY(-2px);
+        }
+
+        textarea, #output-requirements {
+            flex: 1;
+            min-height: 400px;
+            padding: 25px;
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            border-color: var(--liquid-1);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+            border-radius: 15px;
+        }
+
+        #output-requirements {
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .updated {
+            background: linear-gradient(45deg, var(--updated-bg), var(--liquid-3));
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            animation: morph 4s ease-in-out infinite;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-align: center;
+            padding: 12px;
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #kofi-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            backdrop-filter: blur(30px);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            z-index: 999;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #kofi-banner a {
+            color: var(--liquid-3);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            display: inline-block;
+        }
+
+        #kofi-banner a:hover {
+            background: var(--liquid-1);
+            color: white;
+            transform: scale(1.05);
+            border-radius: 25px 10px 25px 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="dark-mode-toggle">🌊 Toggle Mode</button>
+    
+    <header>
+        <h1>🔄 Requirements Updater</h1>
+        <p class="subtitle">Liquid Fluid Morphing</p>
+    </header>
+
+    <div class="container">
+        <div class="input">
+            <h2>📝 Current requirements.txt</h2>
+            <textarea id="input-requirements" placeholder="Paste your requirements.txt here...
+
+Example:
+flask==2.0.1
+requests==2.26.0
+pandas==1.3.0"></textarea>
+            <div class="status" id="status">Waiting for input...</div>
+        </div>
+
+        <div class="output">
+            <h2>✨ Updated requirements.txt</h2>
+            <div id="output-requirements" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <div id="kofi-banner">
+        ☕ Love this tool? <a href="https://ko-fi.com/entangle" target="_blank">Buy me a coffee</a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function getLatestVersion(packageName) {
+            try {
+                const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+                const data = await response.json();
+                return data.info.version;
+            } catch (error) {
+                console.error(`Error fetching ${packageName}:`, error);
+                return null;
+            }
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            if (!input.trim()) {
+                outputElement.innerHTML = '';
+                statusElement.textContent = 'Waiting for input...';
+                return;
+            }
+
+            statusElement.textContent = '🔍 Finding latest versions...';
+            
+            const lines = input.split('\n');
+            const updatedLines = [];
+            let packagesFound = 0;
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    updatedLines.push(trimmedLine);
+                    continue;
+                }
+
+                if (trimmedLine.includes('==')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    const latestVersion = await getLatestVersion(packageName.trim());
+
+                    if (latestVersion) {
+                        packagesFound++;
+                        const updatedLine = `${packageName.trim()}==${latestVersion}`;
+                        
+                        if (latestVersion !== currentVersion.trim()) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } else {
+                        updatedLines.push(`${trimmedLine} # Error: Package not found`);
+                    }
+                } else {
+                    updatedLines.push(trimmedLine);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = `✅ ${packagesFound} packages synced!!`;
+        }
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+    </script>
+</body>
+</html>
