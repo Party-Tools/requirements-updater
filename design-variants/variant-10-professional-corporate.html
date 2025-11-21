@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Professional Corporate</title>
+    <style>
+        :root {
+            --corp-blue: #003d82;
+            --corp-light-blue: #0066cc;
+            --corp-gray: #f5f7fa;
+            --corp-dark-gray: #4a5568;
+            --corp-white: #ffffff;
+            --corp-accent: #ff6b35;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #ffffff 0%, var(--corp-gray) 100%);
+            color: var(--corp-dark-gray);
+            padding: 0;
+        }
+
+        .header-bar {
+            background: var(--corp-blue);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 25px;
+            right: 40px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--corp-light-blue);
+            color: var(--corp-blue);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        #dark-mode-toggle:hover {
+            background: var(--corp-light-blue);
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: var(--corp-blue);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: var(--corp-dark-gray);
+            font-weight: 400;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
+            border-bottom: 3px solid var(--corp-blue);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--corp-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        textarea, #output-requirements {
+            width: 100%;
+            height: 400px;
+            resize: none;
+            border: 2px solid #e2e8f0;
+            padding: 20px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: #fafafa;
+            color: var(--corp-dark-gray);
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            border-color: var(--corp-light-blue);
+        }
+
+        #output-requirements {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: #e6f2ff;
+            border-left: 4px solid var(--corp-light-blue);
+            font-weight: 600;
+            color: var(--corp-blue);
+        }
+
+        .updated {
+            background: var(--corp-accent);
+            color: white;
+            padding: 2px 8px;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: var(--corp-gray);
+        }
+
+        .ko-fi-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--corp-blue);
+            color: white;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+        }
+
+        .ko-fi-button:hover {
+            background: var(--corp-light-blue);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--corp-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <div class="logo">PYTHON REQUIREMENTS UPDATER</div>
+    </div>
+
+    <button id="dark-mode-toggle">Toggle</button>
+
+    <div class="main-container">
+        <header>
+            <h1>Requirements Management System</h1>
+            <p class="subtitle">Enterprise-Grade Dependency Update Tool</p>
+        </header>
+
+        <div class="container">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Input Requirements</h2>
+                </div>
+                <textarea id="input-requirements" placeholder="Paste your requirements.txt here..."></textarea>
+                <div id="status"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>Updated Requirements</h2>
+                </div>
+                <div id="output-requirements" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="https://ko-fi.com/entangle" target="_blank" class="ko-fi-button">
+            Support This Project
+        </a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        function toggleDarkMode() {
+            document.body.style.filter = document.body.style.filter ? '' : 'invert(0.9)';
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            const lines = input.split('\n');
+            
+            statusElement.textContent = 'Processing packages...';
+            outputElement.innerHTML = '';
+
+            const updatedLines = [];
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine && !trimmedLine.startsWith('#')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    try {
+                        const latestVersion = await getLatestVersion(packageName);
+                        const updatedLine = `${packageName}==${latestVersion}`;
+                        if (currentVersion && latestVersion !== currentVersion) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching version for ${packageName}:`, error);
+                        updatedLines.push(trimmedLine + ' # Error fetching latest version');
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = 'Synchronization complete';
+        }
+
+        async function getLatestVersion(packageName) {
+            const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.info.version;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

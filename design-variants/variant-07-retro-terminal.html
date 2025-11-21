@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Retro Terminal</title>
+    <style>
+        :root {
+            --terminal-bg: #0c0c0c;
+            --terminal-green: #33ff33;
+            --terminal-amber: #ffb000;
+            --terminal-red: #ff3333;
+            --terminal-blue: #3366ff;
+            --crt-scanline: rgba(0, 255, 0, 0.05);
+        }
+
+        .dark-mode {
+            --terminal-green: #00ff00;
+            --terminal-bg: #000000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.97; }
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            min-height: 100vh;
+            background-color: var(--terminal-bg);
+            color: var(--terminal-green);
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            animation: flicker 0.15s infinite;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.03) 0px,
+                transparent 1px,
+                transparent 2px,
+                rgba(0, 255, 0, 0.03) 3px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--terminal-green), transparent);
+            animation: scanline 6s linear infinite;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.5;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: var(--terminal-bg);
+            border: 2px solid var(--terminal-green);
+            color: var(--terminal-green);
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            z-index: 1001;
+            transition: all 0.1s;
+        }
+
+        #dark-mode-toggle:hover {
+            background: var(--terminal-green);
+            color: var(--terminal-bg);
+        }
+
+        header {
+            text-align: left;
+            margin: 60px 0 40px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .terminal-header {
+            border: 2px solid var(--terminal-green);
+            padding: 10px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px var(--terminal-green);
+        }
+
+        h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .prompt {
+            color: var(--terminal-amber);
+        }
+
+        .subtitle {
+            font-size: 1em;
+            margin-top: 10px;
+            border-top: 1px solid var(--terminal-green);
+            padding-top: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto 30px;
+        }
+
+        .panel {
+            flex: 1;
+            border: 2px solid var(--terminal-green);
+            padding: 0;
+            background: rgba(0, 255, 0, 0.02);
+            position: relative;
+        }
+
+        .panel-title {
+            background: var(--terminal-green);
+            color: var(--terminal-bg);
+            padding: 8px 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--terminal-green);
+        }
+
+        .panel-content {
+            padding: 15px;
+        }
+
+        textarea, #output-requirements {
+            width: 100%;
+            height: 400px;
+            resize: none;
+            border: 1px solid var(--terminal-green);
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            background: var(--terminal-bg);
+            color: var(--terminal-green);
+            text-shadow: 0 0 2px var(--terminal-green);
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--terminal-green);
+        }
+
+        textarea::placeholder {
+            color: rgba(51, 255, 51, 0.5);
+        }
+
+        #output-requirements {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+        }
+
+        #status {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid var(--terminal-green);
+            text-align: left;
+            font-weight: 700;
+            background: rgba(0, 255, 0, 0.05);
+        }
+
+        #status::before {
+            content: '> ';
+            color: var(--terminal-amber);
+        }
+
+        .cursor::after {
+            content: '█';
+            animation: blink 1s infinite;
+        }
+
+        .updated {
+            background: var(--terminal-amber);
+            color: var(--terminal-bg);
+            padding: 2px 6px;
+            font-weight: 900;
+        }
+
+        .ko-fi-banner {
+            margin-top: 30px;
+            text-align: center;
+            border: 2px solid var(--terminal-green);
+            padding: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ko-fi-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--terminal-green);
+            color: var(--terminal-bg);
+            border: 2px solid var(--terminal-green);
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.1s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .ko-fi-button:hover {
+            background: var(--terminal-bg);
+            color: var(--terminal-green);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Terminal scrollbar */
+        ::-webkit-scrollbar {
+            width: 14px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--terminal-bg);
+            border: 1px solid var(--terminal-green);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--terminal-green);
+            border: 1px solid var(--terminal-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--terminal-amber);
+        }
+
+        .boot-text {
+            color: var(--terminal-green);
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <button id="dark-mode-toggle">[TOGGLE]</button>
+    
+    <header>
+        <div class="terminal-header">
+            <div class="boot-text">SYSTEM BOOTED... OK</div>
+            <h1><span class="prompt">root@pypi:~$</span> PYTHON REQUIREMENTS UPDATER v2.0</h1>
+            <div class="subtitle">
+                <span class="prompt">&gt;&gt;</span> RETRO TERMINAL EDITION - CRT MONITOR SIMULATOR
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="panel input">
+            <div class="panel-title">[INPUT BUFFER]</div>
+            <div class="panel-content">
+                <textarea id="input-requirements" placeholder="> PASTE REQUIREMENTS.TXT DATA HERE..."></textarea>
+                <div id="status"></div>
+            </div>
+        </div>
+        <div class="panel output">
+            <div class="panel-title">[OUTPUT STREAM]</div>
+            <div class="panel-content">
+                <div id="output-requirements" contenteditable="true"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ko-fi-banner">
+        <div class="boot-text">[ SUPPORT SYSTEM MAINTENANCE ]</div>
+        <a href="https://ko-fi.com/entangle" target="_blank" class="ko-fi-button">
+            [DONATE] SUPPORT ON KO-FI
+        </a>
+    </div>
+
+    <script>
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            const lines = input.split('\n');
+            
+            statusElement.textContent = 'SCANNING PACKAGES... PLEASE WAIT';
+            statusElement.classList.add('cursor');
+            outputElement.innerHTML = '';
+
+            const updatedLines = [];
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                if (trimmedLine && !trimmedLine.startsWith('#')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    try {
+                        const latestVersion = await getLatestVersion(packageName);
+                        const updatedLine = `${packageName}==${latestVersion}`;
+                        if (currentVersion && latestVersion !== currentVersion) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching version for ${packageName}:`, error);
+                        updatedLines.push(trimmedLine + ' # ERROR: PACKAGE NOT FOUND');
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = 'SYNC COMPLETE. ALL PACKAGES UPDATED.';
+            statusElement.classList.remove('cursor');
+        }
+
+        async function getLatestVersion(packageName) {
+            const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.info.version;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
