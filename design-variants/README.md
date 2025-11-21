@@ -12,6 +12,10 @@ All variants maintain the original functionality:
 - ✅ Editable output
 - ✅ Ko-fi support link
 
+## 📸 Screenshots
+
+Full-page screenshots of all 15 variants are available in the [`screenshots/`](screenshots/) folder. You can view them in the [Screenshots Gallery](screenshots/README.md) or browse interactively via [`index.html`](index.html).
+
 ---
 
 ## 🎭 The 15 Design Variants
@@ -158,7 +162,7 @@ All variants maintain the original functionality:
 
 ---
 
-### 1️⃣1️⃣ Animated Particles (`variant-11-animated-particles.html`)
+### 11. Animated Particles (`variant-11-animated-particles.html`)
 **Style:** Interactive particle background
 **Colors:** Dark with purple/blue particles
 **Features:**
@@ -172,7 +176,7 @@ All variants maintain the original functionality:
 
 ---
 
-### 1️⃣2️⃣ Split Screen Modern (`variant-12-split-screen-modern.html`)
+### 12. Split Screen Modern (`variant-12-split-screen-modern.html`)
 **Style:** 50/50 split screen layout
 **Colors:** Purple left, white right
 **Features:**
@@ -186,7 +190,7 @@ All variants maintain the original functionality:
 
 ---
 
-### 1️⃣3️⃣ Card-Based Layout (`variant-13-card-based-layout.html`)
+### 13. Card-Based Layout (`variant-13-card-based-layout.html`)
 **Style:** Material-inspired card grid
 **Colors:** Blue accents on white cards
 **Features:**
@@ -200,7 +204,7 @@ All variants maintain the original functionality:
 
 ---
 
-### 1️⃣4️⃣ Futuristic Holographic (`variant-14-futuristic-holographic.html`)
+### 14. Futuristic Holographic (`variant-14-futuristic-holographic.html`)
 **Style:** Sci-fi hologram interface
 **Colors:** Cyan, magenta on black
 **Features:**
@@ -214,7 +218,7 @@ All variants maintain the original functionality:
 
 ---
 
-### 1️⃣5️⃣ Nature-Inspired Organic (`variant-15-nature-inspired-organic.html`)
+### 15. Nature-Inspired Organic (`variant-15-nature-inspired-organic.html`)
 **Style:** Natural, earthy, organic
 **Colors:** Greens, earth tones, pastels
 **Features:**
