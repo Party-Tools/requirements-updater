@@ -316,11 +316,22 @@ pandas==1.3.0"></textarea>
         let mouseX = 0;
         let mouseY = 0;
         
+        // Matrix characters
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        const fontSize = 14;
+        let columns;
+        let drops;
+        
         function resizeCanvases() {
             matrixCanvas.width = window.innerWidth;
             matrixCanvas.height = window.innerHeight;
             particlesCanvas.width = window.innerWidth;
             particlesCanvas.height = window.innerHeight;
+            
+            // Recalculate columns and reinitialize drops
+            columns = Math.floor(matrixCanvas.width / fontSize);
+            drops = Array(columns).fill(1);
         }
         resizeCanvases();
         window.addEventListener('resize', resizeCanvases);
@@ -330,14 +341,6 @@ pandas==1.3.0"></textarea>
             mouseX = e.clientX;
             mouseY = e.clientY;
         });
-        
-        // Matrix characters
-        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const charArray = chars.split('');
-        
-        const fontSize = 14;
-        const columns = Math.floor(matrixCanvas.width / fontSize);
-        const drops = Array(columns).fill(1);
         
         function drawMatrix() {
             matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
