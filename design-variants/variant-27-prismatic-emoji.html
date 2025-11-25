@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Prismatic Emoji</title>
+    <style>
+        :root {
+            --container-bg: rgba(255, 255, 255, 0.12);
+            --text-color: #ffffff;
+            --updated-bg: #00ff88;
+        }
+
+        .dark-mode {
+            --container-bg: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes rgbBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes emojiFloat {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg) scale(1); 
+                opacity: 0.8;
+            }
+            25% { 
+                transform: translateY(-20px) rotate(10deg) scale(1.1); 
+                opacity: 1;
+            }
+            50% { 
+                transform: translateY(-10px) rotate(-5deg) scale(1.05); 
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateY(-25px) rotate(5deg) scale(1.15); 
+                opacity: 1;
+            }
+        }
+
+        @keyframes emojiBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-15px) scale(1.2); }
+        }
+
+        @keyframes emojiSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes emojiPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        @keyframes prismaticShine {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(360deg) brightness(1.2); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(
+                45deg,
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3,
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+            );
+            background-size: 400% 400%;
+            animation: rgbBackground 8s ease infinite;
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Emoji decorations container */
+        .emoji-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 2rem;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 28px;
+            background: var(--container-bg);
+            backdrop-filter: blur(15px);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            animation: prismaticShine 3s linear infinite;
+        }
+
+        #dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 
+                3px 3px 0 #ff0000,
+                6px 6px 0 #ff7f00,
+                9px 9px 0 #ffff00,
+                12px 12px 0 #00ff00,
+                15px 15px 0 #0000ff,
+                18px 18px 0 #9400d3;
+            animation: emojiBounce 2s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-emojis {
+            font-size: 3em;
+            margin-top: 20px;
+            animation: emojiBounce 1.5s ease-in-out infinite;
+        }
+
+        .header-emojis span {
+            display: inline-block;
+            animation: emojiPulse 2s ease-in-out infinite;
+        }
+
+        .header-emojis span:nth-child(2) { animation-delay: 0.2s; }
+        .header-emojis span:nth-child(3) { animation-delay: 0.4s; }
+        .header-emojis span:nth-child(4) { animation-delay: 0.6s; }
+        .header-emojis span:nth-child(5) { animation-delay: 0.8s; }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .input, .output {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            padding: 15px 25px;
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: prismaticShine 4s linear infinite;
+        }
+
+        h2:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        textarea, #output-requirements {
+            flex: 1;
+            min-height: 400px;
+            padding: 25px;
+            background: var(--container-bg);
+            backdrop-filter: blur(25px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.4s ease;
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 136, 0.5),
+                0 0 40px rgba(0, 255, 136, 0.3),
+                0 0 60px rgba(0, 255, 136, 0.1);
+        }
+
+        #output-requirements {
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .updated {
+            background: linear-gradient(90deg, #00ff88, #00ffff, #ff00ff, #ffff00);
+            background-size: 300% 100%;
+            animation: rgbBackground 2s ease infinite;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #000;
+            text-shadow: none;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 1em;
+            text-align: center;
+            padding: 15px;
+            background: var(--container-bg);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        #kofi-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--container-bg);
+            backdrop-filter: blur(25px);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            z-index: 999;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.1em;
+        }
+
+        #kofi-banner a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 25px;
+            background: linear-gradient(90deg, #ff0080, #ff8c00, #00ff88);
+            background-size: 200% 100%;
+            animation: rgbBackground 3s ease infinite;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        #kofi-banner a:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Sparkle elements */
+        .sparkle {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle::before,
+        .sparkle::after {
+            content: '✨';
+            position: absolute;
+            font-size: 1.5em;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2em;
+                text-shadow: 
+                    2px 2px 0 #ff0000,
+                    4px 4px 0 #ff7f00,
+                    6px 6px 0 #00ff00;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="emoji-decorations" id="emoji-container"></div>
+    
+    <div class="content">
+        <button id="dark-mode-toggle">🌈 ✨ Toggle ✨ 🌈</button>
+        
+        <header>
+            <h1>🔄 Requirements Updater 🔄</h1>
+            <p class="subtitle">✨ Prismatic Emoji Edition ✨</p>
+            <div class="header-emojis">
+                <span>🎉</span>
+                <span>🚀</span>
+                <span>💎</span>
+                <span>🌟</span>
+                <span>🎨</span>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="input">
+                <h2>📝 Current requirements.txt 🐍</h2>
+                <textarea id="input-requirements" placeholder="✨ Paste your requirements.txt here! ✨
+
+Example:
+flask==2.0.1
+requests==2.26.0
+pandas==1.3.0
+
+🎉 Watch the magic happen! 🎉"></textarea>
+                <div class="status" id="status">🔮 Waiting for input... ✨</div>
+            </div>
+
+            <div class="output">
+                <h2>✨ Updated requirements.txt 🆕</h2>
+                <div id="output-requirements" contenteditable="true"></div>
+            </div>
+        </div>
+
+        <div id="kofi-banner">
+            🎉 Love this tool? <a href="https://ko-fi.com/entangle" target="_blank">☕ Buy me a coffee! 🌈</a> 🎉
+        </div>
+    </div>
+
+    <script>
+        // Create floating emojis
+        const emojis = ['🎉', '🚀', '💎', '🌟', '✨', '🎨', '🔥', '💫', '⭐', '🌈', '💜', '💙', '💚', '💛', '🧡', '❤️', '🎊', '🎯', '🐍', '📦'];
+        const emojiContainer = document.getElementById('emoji-container');
+        const animationTypes = ['emojiFloat', 'emojiBounce', 'emojiSpin', 'emojiPulse'];
+        
+        function createFloatingEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'floating-emoji';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.top = Math.random() * 100 + 'vh';
+            emoji.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+            emoji.style.animationName = animationTypes[Math.floor(Math.random() * animationTypes.length)];
+            emoji.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            emoji.style.animationDelay = Math.random() * 2 + 's';
+            emojiContainer.appendChild(emoji);
+        }
+        
+        // Create initial emojis
+        for (let i = 0; i < 30; i++) {
+            createFloatingEmoji();
+        }
+        
+        // Add sparkles on mouse move
+        let lastSparkleTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastSparkleTime > 100) {
+                lastSparkleTime = now;
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = e.clientX + 'px';
+                sparkle.style.top = e.clientY + 'px';
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1500);
+            }
+        });
+        
+        // Requirements updater logic
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function getLatestVersion(packageName) {
+            try {
+                const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+                const data = await response.json();
+                return data.info.version;
+            } catch (error) {
+                console.error(`Error fetching ${packageName}:`, error);
+                return null;
+            }
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            if (!input.trim()) {
+                outputElement.innerHTML = '';
+                statusElement.textContent = '🔮 Waiting for input... ✨';
+                return;
+            }
+
+            statusElement.textContent = '🔍 Finding latest versions... 🚀';
+            
+            const lines = input.split('\n');
+            const updatedLines = [];
+            let packagesFound = 0;
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    updatedLines.push(trimmedLine);
+                    continue;
+                }
+
+                if (trimmedLine.includes('==')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    const latestVersion = await getLatestVersion(packageName.trim());
+
+                    if (latestVersion) {
+                        packagesFound++;
+                        const updatedLine = `${packageName.trim()}==${latestVersion}`;
+                        
+                        if (latestVersion !== currentVersion.trim()) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } else {
+                        updatedLines.push(`${trimmedLine} # Error: Package not found`);
+                    }
+                } else {
+                    updatedLines.push(trimmedLine);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = `🎉 ${packagesFound} packages synced!! ✨`;
+        }
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+    </script>
+</body>
+</html>

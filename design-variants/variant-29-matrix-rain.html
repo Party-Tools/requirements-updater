@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Automatically update your Python requirements.txt file with the latest package versions">
+    <meta name="keywords" content="Python, requirements.txt, package update, PyPI, dependency management">
+    <title>Python Requirements.txt Updater - Matrix Rain</title>
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-dark-green: #008f11;
+            --bg-color: #0d0d0d;
+            --container-bg: rgba(0, 255, 65, 0.05);
+            --text-color: #00ff41;
+            --updated-bg: #00ff41;
+        }
+
+        .dark-mode {
+            --matrix-green: #39ff14;
+            --bg-color: #000000;
+            --container-bg: rgba(57, 255, 20, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes matrixGlow {
+            0%, 100% { text-shadow: 0 0 5px var(--matrix-green); }
+            50% { text-shadow: 0 0 20px var(--matrix-green), 0 0 30px var(--matrix-green); }
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            95% { opacity: 0.9; }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Scanline effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(transparent, rgba(0, 255, 65, 0.1), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Matrix rain canvas */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Interactive particles canvas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 28px;
+            background: var(--container-bg);
+            border: 2px solid var(--matrix-green);
+            border-radius: 0;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: flicker 4s infinite;
+        }
+
+        #dark-mode-toggle:hover {
+            background: var(--matrix-green);
+            color: var(--bg-color);
+            box-shadow: 0 0 30px var(--matrix-green);
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: matrixGlow 2s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .input, .output {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding: 15px 25px;
+            background: var(--container-bg);
+            border: 1px solid var(--matrix-green);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+
+        textarea, #output-requirements {
+            flex: 1;
+            min-height: 400px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--matrix-green);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea::placeholder {
+            color: var(--matrix-dark-green);
+        }
+
+        textarea:focus, #output-requirements:focus {
+            outline: none;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 65, 0.4),
+                inset 0 0 30px rgba(0, 255, 65, 0.05);
+        }
+
+        #output-requirements {
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .updated {
+            background: var(--matrix-green);
+            color: var(--bg-color);
+            padding: 2px 8px;
+            font-weight: bold;
+            animation: matrixGlow 1s ease-in-out infinite;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-align: center;
+            padding: 12px;
+            background: var(--container-bg);
+            border: 1px solid var(--matrix-dark-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #kofi-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid var(--matrix-green);
+            color: var(--text-color);
+            text-align: center;
+            padding: 15px;
+            z-index: 999;
+        }
+
+        #kofi-banner a {
+            color: var(--matrix-green);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 20px;
+            border: 1px solid var(--matrix-green);
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #kofi-banner a:hover {
+            background: var(--matrix-green);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px var(--matrix-green);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2em;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <canvas id="particles-canvas"></canvas>
+    
+    <div class="content">
+        <button id="dark-mode-toggle">[Toggle Mode]</button>
+        
+        <header>
+            <h1>&gt; Requirements Updater_</h1>
+            <p class="subtitle">[ Matrix Rain Edition ]</p>
+        </header>
+
+        <div class="container">
+            <div class="input">
+                <h2>&gt; Input_</h2>
+                <textarea id="input-requirements" placeholder="> Paste your requirements.txt here...
+
+Example:
+flask==2.0.1
+requests==2.26.0
+pandas==1.3.0"></textarea>
+                <div class="status" id="status">&gt; Awaiting input...</div>
+            </div>
+
+            <div class="output">
+                <h2>&gt; Output_</h2>
+                <div id="output-requirements" contenteditable="true"></div>
+            </div>
+        </div>
+
+        <div id="kofi-banner">
+            &gt; Support: <a href="https://ko-fi.com/entangle" target="_blank">[Buy Coffee]</a>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Rain Effect
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        const matrixCtx = matrixCanvas.getContext('2d');
+        
+        // Particles Canvas
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const particlesCtx = particlesCanvas.getContext('2d');
+        
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        function resizeCanvases() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
+        }
+        resizeCanvases();
+        window.addEventListener('resize', resizeCanvases);
+        
+        // Track mouse
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+        
+        // Matrix characters
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        
+        const fontSize = 14;
+        const columns = Math.floor(matrixCanvas.width / fontSize);
+        const drops = Array(columns).fill(1);
+        
+        function drawMatrix() {
+            matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            
+            matrixCtx.fillStyle = '#00ff41';
+            matrixCtx.font = `${fontSize}px monospace`;
+            
+            for (let i = 0; i < drops.length; i++) {
+                const char = charArray[Math.floor(Math.random() * charArray.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+                
+                // Brighter characters near mouse
+                const dx = x - mouseX;
+                const dy = y - mouseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 100) {
+                    matrixCtx.fillStyle = '#ffffff';
+                } else if (dist < 200) {
+                    matrixCtx.fillStyle = '#39ff14';
+                } else {
+                    matrixCtx.fillStyle = '#00ff41';
+                }
+                
+                matrixCtx.fillText(char, x, y);
+                
+                if (y > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                
+                drops[i]++;
+            }
+        }
+        
+        // Interactive particles
+        const particles = [];
+        const maxParticles = 50;
+        
+        function createParticle(x, y) {
+            if (particles.length < maxParticles) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    life: 1,
+                    char: charArray[Math.floor(Math.random() * charArray.length)]
+                });
+            }
+        }
+        
+        function drawParticles() {
+            particlesCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.02;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                
+                particlesCtx.fillStyle = `rgba(0, 255, 65, ${p.life})`;
+                particlesCtx.font = '16px monospace';
+                particlesCtx.fillText(p.char, p.x, p.y);
+            }
+        }
+        
+        // Create particles on mouse move
+        let lastParticleTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastParticleTime > 50) {
+                createParticle(e.clientX, e.clientY);
+                lastParticleTime = now;
+            }
+        });
+        
+        function animate() {
+            drawMatrix();
+            drawParticles();
+            requestAnimationFrame(animate);
+        }
+        animate();
+        
+        // Requirements updater logic
+        const inputElement = document.getElementById('input-requirements');
+        const outputElement = document.getElementById('output-requirements');
+        const statusElement = document.getElementById('status');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        async function getLatestVersion(packageName) {
+            try {
+                const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+                const data = await response.json();
+                return data.info.version;
+            } catch (error) {
+                console.error(`Error fetching ${packageName}:`, error);
+                return null;
+            }
+        }
+
+        async function updateRequirements() {
+            const input = inputElement.value;
+            if (!input.trim()) {
+                outputElement.innerHTML = '';
+                statusElement.textContent = '> Awaiting input...';
+                return;
+            }
+
+            statusElement.textContent = '> Processing...';
+            
+            const lines = input.split('\n');
+            const updatedLines = [];
+            let packagesFound = 0;
+
+            for (const line of lines) {
+                const trimmedLine = line.trim();
+                
+                if (!trimmedLine || trimmedLine.startsWith('#')) {
+                    updatedLines.push(trimmedLine);
+                    continue;
+                }
+
+                if (trimmedLine.includes('==')) {
+                    const [packageName, currentVersion] = trimmedLine.split('==');
+                    const latestVersion = await getLatestVersion(packageName.trim());
+
+                    if (latestVersion) {
+                        packagesFound++;
+                        const updatedLine = `${packageName.trim()}==${latestVersion}`;
+                        
+                        if (latestVersion !== currentVersion.trim()) {
+                            updatedLines.push(`<span class="updated">${updatedLine}</span>`);
+                        } else {
+                            updatedLines.push(updatedLine);
+                        }
+                    } else {
+                        updatedLines.push(`${trimmedLine} # Error: Package not found`);
+                    }
+                } else {
+                    updatedLines.push(trimmedLine);
+                }
+            }
+
+            outputElement.innerHTML = updatedLines.join('\n');
+            statusElement.textContent = `> ${packagesFound} packages synced_`;
+        }
+
+        inputElement.addEventListener('input', debounce(updateRequirements, 500));
+    </script>
+</body>
+</html>
